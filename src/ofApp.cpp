@@ -138,6 +138,34 @@ void ofApp::buildCube(ofVbo& cubeVBO)
 }
 
 //--------------------------------------------------------------
+void ofApp::buildCircle(ofVbo& circleVBO, int sides)
+{
+	using namespace glm;
+	ofMesh mesh{};
+
+	mesh.addVertex(vec3(0, 0, 0)); // 0 center.
+	
+	for (int i = 0; i < sides; i++)
+	{
+		double theta = i * 2 * PI / sides; // Remaps i to (0, 2*PI).
+		mesh.addVertex(vec3(cos(theta), sin(theta), 0)); // N edge.
+	}
+
+	int ringStart = 1;
+
+	for (int i = 0; i < sides; i++)
+	{
+		mesh.addIndex(0); // Center.
+		mesh.addIndex(ringStart + i); // First edge.
+		mesh.addIndex(ringStart + (i + 1) % sides); // Next edge (counter-clockwise).
+	}
+
+	mesh.flatNormals();
+
+	circleVBO.setMesh(mesh, GL_STATIC_DRAW);
+}
+
+//--------------------------------------------------------------
 void ofApp::buildMesh(ofMesh &mesh, glm::vec3 pos, float width, float height)
 {
 	float verts[12]{
