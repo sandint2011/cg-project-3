@@ -25,6 +25,7 @@ public:
 
 private:
 	// Helper functions.
+	void buildCube(ofVbo& cubeVBO);
 	void buildMesh(ofMesh &mesh, glm::vec3 pos, float width, float height);
 	float randf(float start, float end);
 
