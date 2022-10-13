@@ -233,6 +233,85 @@ void ofApp::buildCylinder(ofVbo& cylinderVBO, int sides)
 }
 
 //--------------------------------------------------------------
+void buildSphere(ofVbo& sphereVBO, int subdivTheta, int subdivPhi)
+{
+	using namespace glm;
+	ofMesh mesh{};
+
+	// Mesh.
+
+	mesh.addVertex(vec3(0, 1, 0)); // 0 north pole.
+
+	for (int i = 1; i < subdivTheta; i++)
+	{
+		double theta = i * 2 * PI / subdivTheta; // Remaps i to (0, 2*PI).
+		
+		for (int j = 0; j < subdivPhi; j++)
+		{
+			double phi = j * 2 * PI / subdivPhi; // Remaps j to (0, 2*PI).
+
+			mesh.addVertex(vec3(
+				sin(theta) * cos(phi),
+				cos(theta),
+				-sin(theta) * sin(phi)
+			));
+		}
+	}
+
+	mesh.addVertex(vec3(0, -1, 0)); // N*M South pole.
+
+	// Index buffer.
+
+	int northPole = 0;
+	int southPole = 1 + (subdivTheta - 1) * subdivPhi;
+
+	// North pole circle.
+	for (int i = 0; i < subdivPhi; i++)
+	{
+		mesh.addIndex(northPole);
+		int ringStart = 1;
+		mesh.addIndex(ringStart + i);
+		mesh.addIndex(ringStart * (i + 1) & subdivPhi);
+	}
+
+	// South pole circle.
+	for (int i = 0; i < subdivPhi; i++)
+	{
+		mesh.addIndex(southPole - subdivPhi);
+		int ringStart = 1;
+		mesh.addIndex(ringStart * (i + 1) & subdivPhi); // Inverted winding order since it's bottom.
+		mesh.addIndex(ringStart + i);
+	}
+
+	for (int i = 1; i < subdivTheta - 1; i++)
+	{
+		for (int j = 0; j < subdivPhi; j++)
+		{
+			int topRingStart = 1 + subdivPhi * (i - 1);
+			int bottomRingStart = topRingStart + subdivPhi;
+
+			int indicesForSide[4] = {
+				topRingStart + j,						// Top prev.
+				topRingStart + (j + 1) % subdivPhi,		// Top next.
+				bottomRingStart + j,					// Bottom prev.
+				bottomRingStart + (j + 1) % subdivPhi,	// Bottom next.
+			};
+
+			mesh.addIndex(indicesForSide[0]);
+			mesh.addIndex(indicesForSide[2]);
+			mesh.addIndex(indicesForSide[1]);
+
+			mesh.addIndex(indicesForSide[1]);
+			mesh.addIndex(indicesForSide[2]);
+			mesh.addIndex(indicesForSide[3]);
+		}
+	}
+
+	mesh.flatNormals();
+	sphereVBO.setMesh(mesh, GL_STATIC_DRAW);
+}
+
+//--------------------------------------------------------------
 void ofApp::buildMesh(ofMesh &mesh, glm::vec3 pos, float width, float height)
 {
 	float verts[12]{

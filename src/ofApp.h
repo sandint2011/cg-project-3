@@ -28,6 +28,7 @@ private:
 	void buildCube(ofVbo& cubeVBO);
 	void buildCircle(ofVbo& circleVBO, int sides);
 	void buildCylinder(ofVbo& cylinderVBO, int sides);
+	void buildSphere(ofVbo& sphereVBO, int subdivTheta, int subdivPhi);
 	void buildMesh(ofMesh &mesh, glm::vec3 pos, float width, float height);
 	float randf(float start, float end);
 
