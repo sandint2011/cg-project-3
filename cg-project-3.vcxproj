@@ -180,11 +180,17 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CharacterPhysics.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
+    <ClCompile Include="src\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\buildTerrainMesh.h" />
+    <ClInclude Include="src\CellManager.h" />
+    <ClInclude Include="src\CharacterPhysics.h" />
     <ClInclude Include="src\ofApp.h" />
+    <ClInclude Include="src\World.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
