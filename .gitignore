@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# High-res file that can't be pushed to GitHub
+bin/data/TamrielHighRes.png
+
 # Stupid Visual Studio stuff (hopefully I don't regret this).
 .vs
 .vs/
