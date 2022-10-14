@@ -24,6 +24,22 @@ public:
 	void gotMessage(ofMessage msg);
 
 private:
+	ofShader shader;
+
+	// Camera position.
+	glm::vec3 cameraPosition = glm::vec3(0, 0, 0);
+	glm::vec3 cameraFront = glm::vec3(0, 0, -1);
+	glm::vec3 cameraUp = glm::vec3(0, 1, 0);
+
+	// Camera rotation (direction).
+	glm::vec3 cameraDirection = glm::vec3(0, 0, 0);
+	float cameraPitch = 0; // In radians.
+	float cameraHead = 0; // In radians.
+
+	// Mouse controls.
+	int lastMouseX = ofGetViewportWidth() / 2;
+	int lastMouseY = ofGetViewportHeight() / 2;
+
 	// Helper functions.
 	void buildCube(ofVbo& cubeVBO);
 	void buildCircle(ofVbo& circleVBO, int sides);
@@ -33,6 +49,6 @@ private:
 	float randf(float start, float end);
 
 	// Shader reloading.
-	bool needsShaderReload{true};
+	bool needsShaderReload = true;
 	void reloadShaders();
 };
