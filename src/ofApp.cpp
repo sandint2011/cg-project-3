@@ -10,6 +10,11 @@ void ofApp::setup()
 	ofEnableDepthTest();
 	glEnable(GL_CULL_FACE);
 
+	ofShortImage heightmap{};
+	heightmap.setUseTexture(false);
+	heightmap.load("TamrielLowRes.png"); // or "RandomLowRes.png" 
+	assert(heightmapImg.getWidth() != 0 && heightmapImg.getHeight() != 0);
+
 	reloadShaders();
 }
 
