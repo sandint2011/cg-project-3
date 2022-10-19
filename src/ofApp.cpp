@@ -52,7 +52,7 @@ void ofApp::draw()
 	float aspectRatio = static_cast<float>(ofGetViewportWidth()) / static_cast<float>(ofGetViewportHeight());
 
 	// Movel-view-projection.
-	glm::mat4 model = glm::translate(glm::vec3(-heightmapLowRes.getWidth() / 2, -25, -heightmapLowRes.getHeight() / 2));
+	glm::mat4 model = glm::translate(glm::vec3(-heightmapLowRes.getWidth() / 2, -50, -heightmapLowRes.getHeight() / 2));
 
 	glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, nearClip, farClip);
