@@ -28,8 +28,11 @@ public:
 private:
 	ofShortImage heightmapLowRes;
 	ofShortImage heightmapFullRes;
-	CellManager<5> cellManager{heightmapFullRes, 1600, 256};
+	//CellManager<5> cellManager{heightmapFullRes, 1600, 256};
 	ofShader shader;
+	 
+	ofMesh terrainMesh;
+	ofVbo terrainVBO;
 
 	// Camera position.
 	glm::vec3 cameraPosition = glm::vec3(0, 0, 0);

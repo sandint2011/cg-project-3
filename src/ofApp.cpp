@@ -10,11 +10,14 @@ void ofApp::setup()
 	ofEnableDepthTest();
 	glEnable(GL_CULL_FACE);
 
-	ofShortImage heightmap{};
-	heightmap.setUseTexture(false);
-	heightmap.load("TamrielLowRes.png"); // or "RandomLowRes.png" 
-	assert(heightmapImg.getWidth() != 0 && heightmapImg.getHeight() != 0);
+	heightmapLowRes.setUseTexture(false);
+	heightmapLowRes.load("TamrielLowRes.png"); // or "RandomLowRes.png" 
+	assert(heightmapLowRes.getWidth() != 0 && heightmapLowRes.getHeight() != 0);
 
+	buildTerrainMesh(terrainMesh, heightmapLowRes, 0, 0,
+		heightmapLowRes.getWidth() - 1, heightmapLowRes.getHeight() - 1, glm::vec3(1, 50, 1));
+
+	terrainVBO.setMesh(terrainMesh, GL_STATIC_DRAW);
 	reloadShaders();
 }
 
@@ -49,7 +52,8 @@ void ofApp::draw()
 	float aspectRatio = static_cast<float>(ofGetViewportWidth()) / static_cast<float>(ofGetViewportHeight());
 
 	// Movel-view-projection.
-	glm::mat4 model; // TODO.
+	glm::mat4 model = glm::translate(glm::vec3(-heightmapLowRes.getWidth() / 2, -25, -heightmapLowRes.getHeight() / 2));
+
 	glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, nearClip, farClip);
 
@@ -63,7 +67,7 @@ void ofApp::draw()
 
 	shader.setUniformMatrix4f("m", model);
 	shader.setUniformMatrix4f("mvp", projection * view * model);
-	//modelVBO.drawElements(GL_TRIANGLES, modelVBO.getNumIndices());
+	terrainVBO.drawElements(GL_TRIANGLES, terrainVBO.getNumIndices());
 
 	shader.end();
 }
@@ -71,7 +75,7 @@ void ofApp::draw()
 //--------------------------------------------------------------
 void ofApp::exit()
 {
-	cellManager.stop();
+	//cellManager.stop();
 }
 
 //--------------------------------------------------------------

@@ -9,7 +9,7 @@ void buildTerrainMesh(ofMesh& terrainMesh, const ofShortPixels& heightmap,
     {
         for (int y = yStart; y <= yEnd; y++)
         {
-            terrainMesh.addVertex(vec3(x * scale.x, scale.y * (heightmap.getColor(x,y).r), y * scale.z));
+            terrainMesh.addVertex(vec3(x * scale.x, scale.y * (heightmap.getColor(x,y).r) / (float)USHRT_MAX, y * scale.z));
         }
     }
     
@@ -17,14 +17,15 @@ void buildTerrainMesh(ofMesh& terrainMesh, const ofShortPixels& heightmap,
     {
         for (int y = yStart; y <= yEnd -1; y++)
         {
-            terrainMesh.addIndex( x*(xEnd-xStart) + y);
-            terrainMesh.addIndex(x * (xEnd - xStart) + y + 1);
-            terrainMesh.addIndex((x + 1) * (xEnd - xStart) + y);
-            terrainMesh.addIndex((x + 1) * (xEnd - xStart) + y);
-            terrainMesh.addIndex(x * (xEnd - xStart) + y + 1);
-            terrainMesh.addIndex((x + 1) * (xEnd - xStart) + y + 1);
+            terrainMesh.addIndex((x - xStart) * (yEnd - yStart) + (y - yStart));
+            terrainMesh.addIndex((x - xStart) * (yEnd - yStart) + (y - yStart) + 1);
+            terrainMesh.addIndex(((x - xStart) + 1) * (yEnd - yStart) + (y - yStart));
+            terrainMesh.addIndex(((x - xStart) + 1) * (yEnd - yStart) + (y - yStart));
+            terrainMesh.addIndex((x - xStart) * (yEnd - yStart) + (y - yStart) + 1);
+            terrainMesh.addIndex(((x - xStart) + 1) * (yEnd - yStart) + (y - yStart) + 1);
         }
     }
 
     terrainMesh.flatNormals();
+    //flip normals
 }
