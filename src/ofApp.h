@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "CellManager.h"
 #include <vector>
 
 class ofApp : public ofBaseApp
@@ -24,6 +25,8 @@ public:
 	void gotMessage(ofMessage msg);
 
 private:
+	ofShortImage heightmap;
+	CellManager<5> cellManager;
 	ofShader shader;
 
 	// Camera position.
