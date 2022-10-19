@@ -44,7 +44,7 @@ void ofApp::draw()
 {
 	// Camera settings.
 	const float nearClip = 0.1;
-	const float farClip = 100;
+	const float farClip = 200;
 
 	const float startFade = farClip * 0.7;
 	const float endFade = farClip * 0.9;

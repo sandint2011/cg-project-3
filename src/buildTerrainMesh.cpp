@@ -45,7 +45,8 @@ void buildTerrainMesh(ofMesh& terrainMesh, const ofShortPixels& heightmap,
     }
 
     terrainMesh.flatNormals();
-
+    //terrainMesh.smoothNormals(glm::radians(0.0f));
+    
     // Flip normals.
     for (int n = 0; n < terrainMesh.getNumNormals(); n++)
     {
