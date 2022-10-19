@@ -25,8 +25,9 @@ public:
 	void gotMessage(ofMessage msg);
 
 private:
-	ofShortImage heightmap;
-	CellManager<5> cellManager;
+	ofShortImage heightmapLowRes;
+	ofShortImage heightmapFullRes;
+	CellManager<5> cellManager{heightmapFullRes, 1600, 256};
 	ofShader shader;
 
 	// Camera position.
