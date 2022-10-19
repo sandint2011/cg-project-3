@@ -9,23 +9,46 @@ void buildTerrainMesh(ofMesh& terrainMesh, const ofShortPixels& heightmap,
     {
         for (int y = yStart; y <= yEnd; y++)
         {
-            terrainMesh.addVertex(vec3(x * scale.x, scale.y * (heightmap.getColor(x,y).r) / (float)USHRT_MAX, y * scale.z));
+            float normalizedHeightmapValue = (heightmap.getColor(x, y).r) / static_cast<float>(USHRT_MAX);
+            terrainMesh.addVertex(vec3(x * scale.x, scale.y * normalizedHeightmapValue, y * scale.z));
         }
     }
-    
-    for (int x = xStart; x <= xEnd -1; x++)
+
+    int imageHeight = (yEnd - yStart);
+    int thisX;
+    int thisY;
+    int nextX;
+    int nextY;
+
+    for (int x = xStart; x <= xEnd - 1; x++)
     {
-        for (int y = yStart; y <= yEnd -1; y++)
+        for (int y = yStart; y <= yEnd - 1; y++)
         {
-            terrainMesh.addIndex((x - xStart) * (yEnd - yStart) + (y - yStart));
-            terrainMesh.addIndex((x - xStart) * (yEnd - yStart) + (y - yStart) + 1);
-            terrainMesh.addIndex(((x - xStart) + 1) * (yEnd - yStart) + (y - yStart));
-            terrainMesh.addIndex(((x - xStart) + 1) * (yEnd - yStart) + (y - yStart));
-            terrainMesh.addIndex((x - xStart) * (yEnd - yStart) + (y - yStart) + 1);
-            terrainMesh.addIndex(((x - xStart) + 1) * (yEnd - yStart) + (y - yStart) + 1);
+            thisX = x - xStart;
+            thisY = y - yStart;
+            nextX = thisX + 1;
+            nextY = thisY + 1;
+
+            //    0 -- 3
+            //    |  / |
+            //    | /  |
+            //    1 -- 2
+
+            terrainMesh.addIndex(thisX * imageHeight + thisY); // 0 Top-left.
+            terrainMesh.addIndex(thisX * imageHeight + nextY); // 1 Bottom-left.
+            terrainMesh.addIndex(nextX * imageHeight + thisY); // 3 Top-right.
+
+            terrainMesh.addIndex(nextX * imageHeight + thisY); // 3 Top-right.
+            terrainMesh.addIndex(thisX * imageHeight + nextY); // 1 Bottom-left.
+            terrainMesh.addIndex(nextX * imageHeight + nextY); // 2 Bottom-right.
         }
     }
 
     terrainMesh.flatNormals();
-    //flip normals
+
+    // Flip normals.
+    for (int n = 0; n < terrainMesh.getNumNormals(); n++)
+    {
+        terrainMesh.setNormal(n, -terrainMesh.getNormal(n));
+    }
 }
