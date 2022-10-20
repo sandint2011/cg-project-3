@@ -10,14 +10,20 @@ void ofApp::setup()
 	ofEnableDepthTest();
 	glEnable(GL_CULL_FACE);
 
+	// Low resolution terrain setup.
 	heightmapLowRes.setUseTexture(false);
-	heightmapLowRes.load("TamrielLowRes.png"); // or "RandomLowRes.png" 
+	heightmapLowRes.load("TamrielLowRes.png");
 	assert(heightmapLowRes.getWidth() != 0 && heightmapLowRes.getHeight() != 0);
 
-	buildTerrainMesh(terrainMesh, heightmapLowRes, 0, 0,
-		heightmapLowRes.getWidth() - 1, heightmapLowRes.getHeight() - 1, glm::vec3(1, 50, 1));
+	// High resolution terrain setup.
+	heightmapHighRes.setUseTexture(false);
+	heightmapHighRes.load("TamrielHighRes.png");
+	assert(heightmapHighRes.getWidth() != 0 && heightmapHighRes.getHeight() != 0);
 
+	// Build terrain mesh and VBO.
+	buildTerrainMesh(terrainMesh, heightmapLowRes, 0, 0, heightmapLowRes.getWidth() - 1, heightmapLowRes.getHeight() - 1, glm::vec3(1, 50, 1));
 	terrainVBO.setMesh(terrainMesh, GL_STATIC_DRAW);
+
 	reloadShaders();
 }
 

@@ -27,7 +27,7 @@ public:
 
 private:
 	ofShortImage heightmapLowRes;
-	ofShortImage heightmapFullRes;
+	ofShortImage heightmapHighRes;
 	//CellManager<5> cellManager{heightmapFullRes, 1600, 256};
 	ofShader shader;
 	 
