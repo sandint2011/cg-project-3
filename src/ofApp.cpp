@@ -21,11 +21,12 @@ void ofApp::setup()
 	assert(heightmapHighRes.getWidth() != 0 && heightmapHighRes.getHeight() != 0);
 
 	// Build terrain mesh and VBO.
-	buildTerrainMesh(terrainMesh, heightmapLowRes, 0, 0, heightmapLowRes.getWidth() - 1, heightmapLowRes.getHeight() - 1, glm::vec3(1, 50, 1));
+	buildTerrainMesh(terrainMesh, heightmapLowRes, 0, 0, heightmapLowRes.getWidth() - 1, heightmapLowRes.getHeight() - 1, glm::vec3(1, heightScale, 1));
 	terrainVBO.setMesh(terrainMesh, GL_STATIC_DRAW);
 
 	// Setup cell manager.
-	//cellManager.initializeForPosition(cameraPosition);
+	cameraPosition = glm::vec3(heightmapHighRes.getWidth() / 2, 0, heightmapHighRes.getHeight() / 2);
+	cellManager.initializeForPosition(cameraPosition);
 
 	reloadShaders();
 }
@@ -47,7 +48,7 @@ void ofApp::update()
 {
 	reloadShaders();
 
-	//cellManager.optimizeForPosition(cameraPosition);
+	cellManager.optimizeForPosition(cameraPosition);
 }
 
 //--------------------------------------------------------------
@@ -55,7 +56,7 @@ void ofApp::draw()
 {
 	// Camera settings.
 	const float nearClip = 0.1;
-	const float farClip = 200 * 32 * 100;
+	const float farClip = 200 * 32 * 10;
 
 	const float startFade = farClip * 0.7;
 	const float endFade = farClip * 0.9;
@@ -64,12 +65,12 @@ void ofApp::draw()
 
 	// Movel-view-projection.
 	glm::mat4 modelLowRes = (
-		glm::translate(glm::vec3(-heightmapLowRes.getWidth() / 2, -50, -heightmapLowRes.getHeight() / 2))
-		//* glm::scale(glm::vec3(32, 32, 32))
+		glm::translate(glm::vec3(0, -heightScale * 32, 0))
+		* glm::scale(glm::vec3(32, 32, 32))
 		);
 	glm::mat4 modelHighRes = (
-		glm::translate(glm::vec3(-heightmapHighRes.getWidth() / 2, -50, -heightmapHighRes.getHeight() / 2))
-		* glm::scale(glm::vec3(1.0/32.0, 1.0 / 32.0, 1.0 / 32.0))
+		glm::translate(glm::vec3(0, -heightScale * 32, 0))
+		* glm::scale(glm::vec3(1, heightScale / 50, 1))
 		);
 
 	glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
@@ -87,10 +88,12 @@ void ofApp::draw()
 	shader.setUniformMatrix4f("mvp", projection * view * modelLowRes);
 	terrainVBO.drawElements(GL_TRIANGLES, terrainVBO.getNumIndices());
 
-	//glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// Cell manager drawing.
-	//cellManager.drawActiveCells(cameraPosition, farClip);
+	shader.setUniformMatrix4f("m", modelHighRes);
+	shader.setUniformMatrix4f("mvp", projection * view * modelHighRes);
+	cellManager.drawActiveCells(cameraPosition, farClip);
 
 	shader.end();
 }
@@ -98,7 +101,7 @@ void ofApp::draw()
 //--------------------------------------------------------------
 void ofApp::exit()
 {
-	//cellManager.stop();
+	cellManager.stop();
 }
 
 //--------------------------------------------------------------
@@ -109,7 +112,7 @@ void ofApp::keyPressed(int key)
 		needsShaderReload = true;
 	}
 
-	const float cameraSpeed = 20;
+	const float cameraSpeed = 20 * 32;
 	const float sprint = 5;
 	const float dt = ofGetLastFrameTime();
 

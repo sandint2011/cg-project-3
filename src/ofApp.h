@@ -28,8 +28,11 @@ public:
 private:
 	ofShortImage heightmapLowRes;
 	ofShortImage heightmapHighRes;
-	//CellManager<5> cellManager{heightmapHighRes, 1600, 256};
+	CellManager<5> cellManager{heightmapHighRes, 1600, 256};
 	ofShader shader;
+
+	const float heightScale = 32;
+	const float resolutionRatio = 32;
 	 
 	ofMesh terrainMesh;
 	ofVbo terrainVBO;

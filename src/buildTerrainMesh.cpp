@@ -5,30 +5,33 @@ void buildTerrainMesh(ofMesh& terrainMesh, const ofShortPixels& heightmap,
 {
     using namespace glm;
 
-    for (int x = xStart; x < xEnd; x++)
+    for (int x = xStart; x <= xEnd; x++)
     {
-        for (int y = yStart; y < yEnd; y++)
+        for (int y = yStart; y <= yEnd; y++)
         {
             float normalizedHeightmapValue = (heightmap.getColor(x, y).r) / static_cast<float>(USHRT_MAX);
             terrainMesh.addVertex(vec3(x * scale.x, scale.y * normalizedHeightmapValue, y * scale.z));
         }
     }
 
-    int imageHeight = (yEnd - yStart);
+    int imageHeight = (yEnd - yStart) + 1; // +1 because it fixes missing edge quads or connecting edge triangles (idk why).
     int thisX;
     int thisY;
     int nextX;
     int nextY;
 
-    for (int x = xStart; x < xEnd - 1; x++)
+    for (int x = xStart; x <= xEnd - 1; x++)
     {
-        for (int y = yStart; y < yEnd - 1; y++)
+        for (int y = yStart; y <= yEnd - 1; y++)
         {
             thisX = x - xStart;
             thisY = y - yStart;
             nextX = thisX + 1;
             nextY = thisY + 1;
 
+            // 0 is this XY
+            // 2 is next XY
+            // 
             //    0 -- 3
             //    |  / |
             //    | /  |
@@ -45,7 +48,6 @@ void buildTerrainMesh(ofMesh& terrainMesh, const ofShortPixels& heightmap,
     }
 
     terrainMesh.flatNormals();
-    //terrainMesh.smoothNormals(glm::radians(0.0f));
     
     // Flip normals.
     for (int n = 0; n < terrainMesh.getNumNormals(); n++)
