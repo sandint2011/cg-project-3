@@ -5,9 +5,9 @@ void buildTerrainMesh(ofMesh& terrainMesh, const ofShortPixels& heightmap,
 {
     using namespace glm;
 
-    for (int x = xStart; x <= xEnd; x++)
+    for (int x = xStart; x < xEnd; x++)
     {
-        for (int y = yStart; y <= yEnd; y++)
+        for (int y = yStart; y < yEnd; y++)
         {
             float normalizedHeightmapValue = (heightmap.getColor(x, y).r) / static_cast<float>(USHRT_MAX);
             terrainMesh.addVertex(vec3(x * scale.x, scale.y * normalizedHeightmapValue, y * scale.z));
@@ -20,9 +20,9 @@ void buildTerrainMesh(ofMesh& terrainMesh, const ofShortPixels& heightmap,
     int nextX;
     int nextY;
 
-    for (int x = xStart; x <= xEnd - 1; x++)
+    for (int x = xStart; x < xEnd - 1; x++)
     {
-        for (int y = yStart; y <= yEnd - 1; y++)
+        for (int y = yStart; y < yEnd - 1; y++)
         {
             thisX = x - xStart;
             thisY = y - yStart;
