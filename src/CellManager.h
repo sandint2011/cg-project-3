@@ -124,7 +124,7 @@ public:
                     // Add new cells to the right of the old active region
                     for (unsigned int j { 0 }; j < 2 * CELL_PAIRS_PER_DIMENSION; j++)
                     {
-                        cellLoadQueue.push(vec2(x, newGridStartPos.y) + glm::vec2(2 * CELL_PAIRS_PER_DIMENSION - 1, j) * cellSize);
+                        cellLoadQueue.push(glm::vec2(x, newGridStartPos.y) + glm::vec2(2 * CELL_PAIRS_PER_DIMENSION - 1, j) * cellSize);
                     }
                 }
             }
@@ -136,7 +136,7 @@ public:
                     // Add new cells to the left of the old active region
                     for (unsigned int j { 0 }; j < 2 * CELL_PAIRS_PER_DIMENSION; j++)
                     {
-                        cellLoadQueue.push(vec2(x, newGridStartPos.y + j * cellSize));
+                        cellLoadQueue.push(glm::vec2(x, newGridStartPos.y + j * cellSize));
                     }
                 }
             }
@@ -171,7 +171,7 @@ public:
                     // Add the top cells
                     for (float x { startX }; x <= endX + 0.00001f; x += cellSize)
                     {
-                        cellLoadQueue.push(vec2(x, y + (2 * CELL_PAIRS_PER_DIMENSION - 1) * cellSize));
+                        cellLoadQueue.push(glm::vec2(x, y + (2 * CELL_PAIRS_PER_DIMENSION - 1) * cellSize));
                     }
                 }
             }
@@ -183,7 +183,7 @@ public:
                     // Add the bottom cells
                     for (float x { startX }; x <= endX + 0.00001f; x += cellSize)
                     {
-                        cellLoadQueue.push(vec2(x, y));
+                        cellLoadQueue.push(glm::vec2(x, y));
                     }
                 }
             }
@@ -278,11 +278,11 @@ private:
         if (startPos.x < heightmap.getWidth() && startPos.y < heightmap.getHeight())
         {
             // Clamp the size to the bounds of the heightmap
-            size = min(size, uvec2(heightmap.getWidth(), heightmap.getHeight()) - startPos - 1u);
+            size = glm::min(size, glm::uvec2(heightmap.getWidth(), heightmap.getHeight()) - startPos - 1u);
 
             // Use buildTerrainMesh() to initialize or re-initialize the mesh.
             // The scale parameter taken by buildTerrainMesh needs to be relative to the dimensions of the heightmap
-            buildTerrainMesh(terrainMesh, heightmap.getPixels(), startPos.x, startPos.y, startPos.x + size.x, startPos.y + size.y, vec3(1, heightmapScale, 1));
+            buildTerrainMesh(terrainMesh, heightmap.getPixels(), startPos.x, startPos.y, startPos.x + size.x, startPos.y + size.y, glm::vec3(1, heightmapScale, 1));
         }
     }
     

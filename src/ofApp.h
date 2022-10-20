@@ -28,7 +28,7 @@ public:
 private:
 	ofShortImage heightmapLowRes;
 	ofShortImage heightmapHighRes;
-	//CellManager<5> cellManager{heightmapFullRes, 1600, 256};
+	//CellManager<5> cellManager{heightmapHighRes, 1600, 256};
 	ofShader shader;
 	 
 	ofMesh terrainMesh;

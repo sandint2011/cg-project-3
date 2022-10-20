@@ -24,6 +24,9 @@ void ofApp::setup()
 	buildTerrainMesh(terrainMesh, heightmapLowRes, 0, 0, heightmapLowRes.getWidth() - 1, heightmapLowRes.getHeight() - 1, glm::vec3(1, 50, 1));
 	terrainVBO.setMesh(terrainMesh, GL_STATIC_DRAW);
 
+	// Setup cell manager.
+	//cellManager.initializeForPosition(cameraPosition);
+
 	reloadShaders();
 }
 
@@ -43,6 +46,8 @@ void ofApp::reloadShaders()
 void ofApp::update()
 {
 	reloadShaders();
+
+	//cellManager.optimizeForPosition(cameraPosition);
 }
 
 //--------------------------------------------------------------
@@ -50,7 +55,7 @@ void ofApp::draw()
 {
 	// Camera settings.
 	const float nearClip = 0.1;
-	const float farClip = 200;
+	const float farClip = 200 * 32 * 100;
 
 	const float startFade = farClip * 0.7;
 	const float endFade = farClip * 0.9;
@@ -58,7 +63,14 @@ void ofApp::draw()
 	float aspectRatio = static_cast<float>(ofGetViewportWidth()) / static_cast<float>(ofGetViewportHeight());
 
 	// Movel-view-projection.
-	glm::mat4 model = glm::translate(glm::vec3(-heightmapLowRes.getWidth() / 2, -50, -heightmapLowRes.getHeight() / 2));
+	glm::mat4 modelLowRes = (
+		glm::translate(glm::vec3(-heightmapLowRes.getWidth() / 2, -50, -heightmapLowRes.getHeight() / 2))
+		//* glm::scale(glm::vec3(32, 32, 32))
+		);
+	glm::mat4 modelHighRes = (
+		glm::translate(glm::vec3(-heightmapHighRes.getWidth() / 2, -50, -heightmapHighRes.getHeight() / 2))
+		* glm::scale(glm::vec3(1.0/32.0, 1.0 / 32.0, 1.0 / 32.0))
+		);
 
 	glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, nearClip, farClip);
@@ -71,9 +83,14 @@ void ofApp::draw()
 	shader.setUniform1f("startFade", startFade);
 	shader.setUniform1f("endFade", endFade);
 
-	shader.setUniformMatrix4f("m", model);
-	shader.setUniformMatrix4f("mvp", projection * view * model);
+	shader.setUniformMatrix4f("m", modelLowRes);
+	shader.setUniformMatrix4f("mvp", projection * view * modelLowRes);
 	terrainVBO.drawElements(GL_TRIANGLES, terrainVBO.getNumIndices());
+
+	//glClear(GL_DEPTH_BUFFER_BIT);
+
+	// Cell manager drawing.
+	//cellManager.drawActiveCells(cameraPosition, farClip);
 
 	shader.end();
 }
@@ -92,7 +109,7 @@ void ofApp::keyPressed(int key)
 		needsShaderReload = true;
 	}
 
-	const float cameraSpeed = 10;
+	const float cameraSpeed = 20;
 	const float sprint = 5;
 	const float dt = ofGetLastFrameTime();
 
