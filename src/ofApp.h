@@ -28,8 +28,10 @@ public:
 private:
 	ofShortImage heightmapLowRes;
 	ofShortImage heightmapHighRes;
-	CellManager<5> cellManager{heightmapHighRes, 1600, 256};
+	CellManager<4> cellManager{heightmapHighRes, 1600, 256};
 	ofShader shader;
+
+	ofVbo waterVBO;
 
 	const float heightScale = 32;
 	const float resolutionRatio = 32;

@@ -10,6 +10,8 @@ void ofApp::setup()
 	ofEnableDepthTest();
 	glEnable(GL_CULL_FACE);
 
+	ofSetBackgroundColor(135, 205, 235, 255);
+
 	// Low resolution terrain setup.
 	heightmapLowRes.setUseTexture(false);
 	heightmapLowRes.load("TamrielLowRes.png");
@@ -27,6 +29,12 @@ void ofApp::setup()
 	// Setup cell manager.
 	cameraPosition = glm::vec3(heightmapHighRes.getWidth() / 2, 0, heightmapHighRes.getHeight() / 2);
 	cellManager.initializeForPosition(cameraPosition);
+
+	// Setup water mesh.
+	ofMesh waterMesh;
+	//buildMesh(waterMesh, cameraPosition, 1600.0, 1600.0);
+	buildCube(waterVBO);
+	waterVBO.setMesh(waterMesh, GL_STATIC_DRAW);
 
 	reloadShaders();
 }
@@ -72,10 +80,14 @@ void ofApp::draw()
 		glm::translate(glm::vec3(0, -heightScale * 32, 0))
 		* glm::scale(glm::vec3(1, heightScale / 50, 1))
 		);
+	
+	glm::mat4 modelWater = (
+		glm::translate(glm::vec3(1600 * 32, -heightScale * 32, 1600 * 32))
+		* glm::scale(glm::vec3(1600 * 32, 1, 1600 * 32))
+		);
 
 	glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, nearClip, farClip);
-
 
 	// Shader drawing.
 	shader.begin();
@@ -88,13 +100,21 @@ void ofApp::draw()
 	shader.setUniform1f("startFade", startFade);
 	shader.setUniform1f("endFade", endFade);
 
+	// Draw water.
+	shader.setUniformMatrix4f("m", modelWater);
+	shader.setUniformMatrix4f("mvp", projection * view * modelWater);
+	waterVBO.drawElements(GL_TRIANGLES, waterVBO.getNumIndices());
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	// Draw low res terrain.
 	shader.setUniformMatrix4f("m", modelLowRes);
 	shader.setUniformMatrix4f("mvp", projection * view * modelLowRes);
 	terrainVBO.drawElements(GL_TRIANGLES, terrainVBO.getNumIndices());
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	// Cell manager drawing.
+	// Draw high res terrain..
 	shader.setUniformMatrix4f("m", modelHighRes);
 	shader.setUniformMatrix4f("mvp", projection * view * modelHighRes);
 	cellManager.drawActiveCells(cameraPosition, farClip);
