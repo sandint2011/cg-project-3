@@ -80,6 +80,10 @@ void ofApp::draw()
 	// Shader drawing.
 	shader.begin();
 
+	shader.setUniform3f("lightDirection", normalize(glm::vec3(-1, 1, 1)));
+	shader.setUniform3f("lightColor", glm::vec3(1, 1, 0.9));
+	shader.setUniform3f("ambientColor", glm::vec3(0.1));
+
 	shader.setUniform3f("cameraPosition", cameraPosition);
 	shader.setUniform1f("startFade", startFade);
 	shader.setUniform1f("endFade", endFade);

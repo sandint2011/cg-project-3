@@ -8,13 +8,28 @@ uniform float endFade;
 
 out vec4 outColor;
 
+uniform vec3 lightDirection;
+uniform vec3 lightColor;
+uniform vec3 ambientColor;
+
 void main()
 {
 	// Color based on normals.
-	outColor = vec4(fragNormal * 0.5 + 0.5, 1.0);
+	//vec3 meshColor = fragNormal * 0.5 + 0.5;
+	vec3 meshColor = vec3(90.0/256.0, 130.0/256.0, 30.0/256.0);
+	
+	// Lighting.
+	vec3 normal = normalize(fragNormal);
+	float nDotL = max(0, dot(normal, lightDirection));
+	// Surface lighting.
+	vec3 irradiance = ambientColor + lightColor * nDotL;
+	// Surface reflection.
+	vec3 linearColor = meshColor * irradiance;
 
 	// Fade out based on distance from camera.
 	float fade = distanceFromCamera;
 	fade = (fade - startFade) / (endFade - startFade); // Normalized.
-	outColor.a = 1.0 - fade;
+	
+	// Color based on normals, lighting, and distance fading.
+	outColor = vec4(pow(linearColor, vec3(1.0 / 2.2)), 1.0 - fade);
 }
