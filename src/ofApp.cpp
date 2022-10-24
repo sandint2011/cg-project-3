@@ -82,7 +82,7 @@ void ofApp::draw()
 		);
 	
 	glm::mat4 modelWater = (
-		glm::translate(glm::vec3(1600 * 30, -heightScale * 9, 1600 * 30))
+		glm::translate(glm::vec3(1600 * 30, -heightScale * 18, 1600 * 30))
 		* glm::scale(glm::vec3(1600 * 32, 1, 1600 * 32))
 		);
 
@@ -92,13 +92,6 @@ void ofApp::draw()
 	// Shader drawing.
 	shader.begin();
 
-	// Draw water.
-	shader.setUniformMatrix4f("m", modelWater);
-	shader.setUniformMatrix4f("mvp", projection * view * modelWater);
-	waterVBO.drawElements(GL_TRIANGLES, waterVBO.getNumIndices());
-
-	glClear(GL_DEPTH_BUFFER_BIT);
-
 	shader.setUniform3f("lightDirection", normalize(glm::vec3(-1, 1, 1)));
 	shader.setUniform3f("lightColor", glm::vec3(1, 1, 0.9));
 	shader.setUniform3f("ambientColor", glm::vec3(0.1));
@@ -106,6 +99,11 @@ void ofApp::draw()
 	shader.setUniform3f("cameraPosition", cameraPosition);
 	shader.setUniform1f("startFade", startFade);
 	shader.setUniform1f("endFade", endFade);
+
+	// Draw water.
+	shader.setUniformMatrix4f("m", modelWater);
+	shader.setUniformMatrix4f("mvp", projection * view * modelWater);
+	waterVBO.drawElements(GL_TRIANGLES, waterVBO.getNumIndices());
 
 	// Draw low res terrain.
 	shader.setUniformMatrix4f("m", modelLowRes);
