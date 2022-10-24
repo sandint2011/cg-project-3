@@ -63,7 +63,7 @@ void ofApp::update()
 void ofApp::draw()
 {
 	// Camera settings.
-	const float nearClip = 0.1;
+	const float nearClip = 25;
 	const float farClip = 200 * 10 * 32;
 
 	const float startFade = farClip * 0.7;
@@ -101,9 +101,11 @@ void ofApp::draw()
 	shader.setUniform1f("endFade", endFade);
 
 	// Draw water.
+	shader.setUniform1i("isWater", 1);
 	shader.setUniformMatrix4f("m", modelWater);
 	shader.setUniformMatrix4f("mvp", projection * view * modelWater);
 	waterVBO.drawElements(GL_TRIANGLES, waterVBO.getNumIndices());
+	shader.setUniform1i("isWater", 0);
 
 	// Draw low res terrain.
 	shader.setUniformMatrix4f("m", modelLowRes);
@@ -112,7 +114,14 @@ void ofApp::draw()
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	// Draw high res terrain..
+	//// Draw water.
+	//shader.setUniform1i("isWater", 1);
+	//shader.setUniformMatrix4f("m", modelWater);
+	//shader.setUniformMatrix4f("mvp", projection * view * modelWater);
+	//waterVBO.drawElements(GL_TRIANGLES, waterVBO.getNumIndices());
+	//shader.setUniform1i("isWater", 0);
+
+	// Draw high res terrain.
 	shader.setUniformMatrix4f("m", modelHighRes);
 	shader.setUniformMatrix4f("mvp", projection * view * modelHighRes);
 	cellManager.drawActiveCells(cameraPosition, farClip);

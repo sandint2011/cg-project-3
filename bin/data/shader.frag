@@ -12,6 +12,8 @@ uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform vec3 ambientColor;
 
+uniform int isWater;
+
 void main()
 {
 	// Color based on normals.
@@ -25,6 +27,11 @@ void main()
 	vec3 irradiance = ambientColor + lightColor * nDotL;
 	// Surface reflection.
 	vec3 linearColor = meshColor * irradiance;
+
+	// Custom water color (janky but whatever).
+	if (isWater == 1) {
+		linearColor = vec3(35.0/256.0, 100.0/256.0, 220.0/256.0);
+	}
 
 	// Fade out based on distance from camera.
 	float fade = distanceFromCamera;
