@@ -63,8 +63,9 @@ void ofApp::update()
 void ofApp::draw()
 {
 	// Camera settings.
-	const float nearClip = 25;
+	const float nearClip = 15;
 	const float farClip = 200 * 10 * 32;
+	const float farClipHighRes = farClip * 0.0075;
 
 	const float startFade = farClip * 0.7;
 	const float endFade = farClip * 0.9;
@@ -88,6 +89,7 @@ void ofApp::draw()
 
 	glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, nearClip, farClip);
+	glm::mat4 projectionHighRes = glm::perspective(glm::radians(90.0f), aspectRatio, nearClip, farClipHighRes);
 
 	// Shader drawing.
 	shader.begin();
@@ -114,17 +116,17 @@ void ofApp::draw()
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	//// Draw water.
-	//shader.setUniform1i("isWater", 1);
-	//shader.setUniformMatrix4f("m", modelWater);
-	//shader.setUniformMatrix4f("mvp", projection * view * modelWater);
-	//waterVBO.drawElements(GL_TRIANGLES, waterVBO.getNumIndices());
-	//shader.setUniform1i("isWater", 0);
+	// Draw water.
+	shader.setUniform1i("isWater", 1);
+	shader.setUniformMatrix4f("m", modelWater);
+	shader.setUniformMatrix4f("mvp", projectionHighRes * view * modelWater);
+	waterVBO.drawElements(GL_TRIANGLES, waterVBO.getNumIndices());
+	shader.setUniform1i("isWater", 0);
 
 	// Draw high res terrain.
 	shader.setUniformMatrix4f("m", modelHighRes);
-	shader.setUniformMatrix4f("mvp", projection * view * modelHighRes);
-	cellManager.drawActiveCells(cameraPosition, farClip);
+	shader.setUniformMatrix4f("mvp", projectionHighRes * view * modelHighRes);
+	cellManager.drawActiveCells(cameraPosition, farClipHighRes);
 
 	shader.end();
 }
